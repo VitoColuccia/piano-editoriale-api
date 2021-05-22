@@ -14,6 +14,24 @@ class EditorialProject extends Model
 
     protected $table = 'editorial_projects';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'title',
+        'pages',
+        'price',
+        'cost',
+        'sector_id',
+        'author_id',
+        'is_approved_by_ceo',
+        'is_approved_by_editorial_director',
+        'is_approved_by_editorial_responsible',
+        'is_approved_by_sales_director',
+    ];
+
     /************************************************************************************
      * RELATIONSHIPS
      */
@@ -25,7 +43,7 @@ class EditorialProject extends Model
      */
     public function author(): HasOne
     {
-        return $this->hasOne(User::class, 'id');
+        return $this->hasOne(User::class, 'id', 'author_id');
     }
 
     /**
@@ -35,7 +53,7 @@ class EditorialProject extends Model
      */
     public function sector(): HasOne
     {
-        return $this->hasOne(Sector::class, 'id');
+        return $this->hasOne(Sector::class, 'id', 'sector_id');
     }
 
     /**
