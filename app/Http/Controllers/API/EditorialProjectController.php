@@ -2,15 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EditorialProjectDestroyRequest;
 use App\Http\Requests\EditorialProjectIndexRequest;
 use App\Http\Requests\EditorialProjectShowRequest;
 use App\Http\Requests\EditorialProjectStoreRequest;
+use App\Http\Requests\EditorialProjectUpdateRequest;
 use App\Http\Resources\EditorialProjectResource;
 use App\Models\EditorialProject;
 use App\Models\EditorialProjectLog;
 use Exception;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -77,11 +83,11 @@ class EditorialProjectController extends Controller
                 $editorial_project->author_id = $request->has('author_id') ? $request->author_id : Auth::id();
                 $editorial_project->save();
 
-                $editorial_project_log = new EditorialProjectLog();
-                $editorial_project_log->editorial_project_id = $editorial_project->id;
-                $editorial_project_log->user_id = Auth::id();
-                $editorial_project_log->action = EditorialProjectLog::ACTION_CREATE;
-                $editorial_project_log->save();
+//                $editorial_project_log = new EditorialProjectLog();
+//                $editorial_project_log->editorial_project_id = $editorial_project->id;
+//                $editorial_project_log->user_id = Auth::id();
+//                $editorial_project_log->action = EditorialProjectLog::ACTION_CREATE;
+//                $editorial_project_log->save();
 
                 DB::commit();
             } catch (Exception $exception){
@@ -112,23 +118,38 @@ class EditorialProjectController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param EditorialProjectUpdateRequest $request
+     * @param EditorialProject $editorial_project
+     * @return EditorialProjectResource
+     * @throws Exception
      */
-    public function update(Request $request, $id)
+    public function update(EditorialProjectUpdateRequest $request, EditorialProject $editorial_project): EditorialProjectResource
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $editorial_project->update($request->only(['title', 'sector_id', 'is_approved_by_ceo',
+                'is_approved_by_editorial_director', 'is_approved_by_sales_director',
+                'is_approved_by_editorial_responsible']));
+            DB::commit();
+        } catch (Exception $exception){
+            DB::rollBack();
+            throw $exception;
+        }
+
+        return new EditorialProjectResource($editorial_project);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param EditorialProjectDestroyRequest $request
+     * @param EditorialProject $editorial_project
+     * @return Application|ResponseFactory|Response
      */
-    public function destroy($id)
+    public function destroy(EditorialProjectDestroyRequest $request, EditorialProject $editorial_project): Application|ResponseFactory|Response
     {
-        //
+        $editorial_project->delete();
+        return response(null, 204);
     }
 }
