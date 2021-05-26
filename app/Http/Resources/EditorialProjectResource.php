@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Models\EditorialProjectTranslation;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\App;
 
 class EditorialProjectResource extends JsonResource
 {
@@ -16,7 +18,8 @@ class EditorialProjectResource extends JsonResource
     {
         return[
             'id' => $this->id,
-            'title' => $this->title,
+            //'title' => $this->title,
+            'title' => $this->getTranslation(EditorialProjectTranslation::FIELD_TITLE, App::getLocale()),
             'is_approved_by_ceo' => $this->is_approved_by_ceo,
             'is_approved_by_editorial_director' => $this->is_approved_by_editorial_director,
             'is_approved_by_editorial_responsible' => $this->is_approved_by_editorial_responsible,

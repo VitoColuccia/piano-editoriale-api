@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Jobs\StoreEditorialProjectLogJob;
+use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -13,7 +14,7 @@ use function Illuminate\Events\queueable;
 
 class EditorialProject extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasTranslations;
 
     protected $table = 'editorial_projects';
 
@@ -23,7 +24,7 @@ class EditorialProject extends Model
      * @var array
      */
     protected $fillable = [
-        'title',
+       // 'title',
         'pages',
         'price',
         'cost',
@@ -89,6 +90,16 @@ class EditorialProject extends Model
     public function logs(): HasMany
     {
         return $this->hasMany(EditorialProjectLog::class, 'editorial_project_id');
+    }
+
+    /**
+     * Get translations
+     *
+     * @return HasMany
+     */
+    public function translations(): HasMany
+    {
+        return $this->hasMany(EditorialProjectTranslation::class, 'editorial_project_id');
     }
 
     /************************************************************************************

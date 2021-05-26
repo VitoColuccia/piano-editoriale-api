@@ -8,13 +8,11 @@ Button Text
 @endcomponent
 
 @component('mail::table')
-| Progetto Editoriale             | Errori   |
-| ------------------------------- | --------:|
-@foreach ($editorial_projects as $editorial_project)
-
-| {{$editorial_project->title}} | {{$editorial_project->error}} |
-
-@endforeach
+    | Titolo       | Errori         |
+    | ------------- |:-------------:|
+    @foreach($data as $item)
+        | {{$item['title']}}      | {{$item['errors_count']}}      |
+    @endforeach
 @endcomponent
 
 Thanks,<br>

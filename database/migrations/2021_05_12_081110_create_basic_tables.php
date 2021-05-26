@@ -40,7 +40,6 @@ class CreateBasicTables extends Migration
 
         Schema::create('editorial_projects', function (Blueprint $table){
             $table->id();
-            $table->string('title');
             $table->unsignedTinyInteger('sector_id');
             $table->unsignedBigInteger('author_id');
             $table->boolean('is_approved_by_ceo')->default(false);
@@ -55,6 +54,17 @@ class CreateBasicTables extends Migration
             $table->foreign('sector_id')->references('id')->on('sectors');
             $table->timestamps();
             $table->softDeletes();
+        });
+
+        Schema::create('editorial_project_translations', function (Blueprint $table){
+           $table->bigIncrements('id');
+           $table->unsignedBigInteger('editorial_project_id');
+           $table->enum('field', ['TITLE', 'DESCRIPTION', 'PERMALINK']);
+           $table->enum('locale', ['en', 'it', 'de', 'es', 'fr']);
+           $table->text('text');
+           $table->foreign('editorial_project_id')->references('id')->on('editorial_projects')->onDelete('cascade');
+           $table->softDeletes();
+           $table->timestamps();
         });
 
         Schema::create('editorial_project_logs', function (Blueprint $table){
@@ -77,6 +87,7 @@ class CreateBasicTables extends Migration
     public function down()
     {
         Schema::dropIfExists('editorial_projects_log');
+        Schema::dropIfExists('editorial_project_translations');
         Schema::dropIfExists('editorial_projects');
         Schema::dropIfExists('sectors');
         Schema::dropIfExists('user_role');

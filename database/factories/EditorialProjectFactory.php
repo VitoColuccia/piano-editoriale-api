@@ -27,7 +27,7 @@ class EditorialProjectFactory extends Factory
         $user = User::all()->random(1)->first();
 
         return [
-            'title' => $this->faker->sentence(5, true),
+            //'title' => $this->faker->sentence(5, true),
             'pages' => $this->faker->numberBetween(20, 5000),
             'price' => $this->faker->numberBetween(20, 5000),
             'cost' => $this->faker->numberBetween(20, 5000),
