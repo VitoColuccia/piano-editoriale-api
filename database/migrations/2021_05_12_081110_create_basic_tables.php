@@ -77,6 +77,15 @@ class CreateBasicTables extends Migration
             $table->foreign('editorial_project_id')->references('id')->on('editorial_projects')->onDelete('cascade');
             $table->timestamps();
         });
+
+        Schema::create('media', function(Blueprint $table){
+           $table->id();
+           $table->morphs('model');
+           $table->string('name');
+           $table->string('disk');
+           $table->string('extension');
+           $table->timestamps();
+        });
     }
 
     /**
@@ -86,7 +95,8 @@ class CreateBasicTables extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('editorial_projects_log');
+        Schema::dropIfExists('media');
+        Schema::dropIfExists('editorial_project_logs');
         Schema::dropIfExists('editorial_project_translations');
         Schema::dropIfExists('editorial_projects');
         Schema::dropIfExists('sectors');

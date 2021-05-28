@@ -7,10 +7,12 @@ use App\Http\Requests\EditorialProjectIndexRequest;
 use App\Http\Requests\EditorialProjectShowRequest;
 use App\Http\Requests\EditorialProjectStoreRequest;
 use App\Http\Requests\EditorialProjectUpdateRequest;
+use App\Http\Requests\EditorialProjectUploadFileRequest;
 use App\Http\Resources\EditorialProjectResource;
 use App\Models\EditorialProject;
 use App\Models\EditorialProjectLog;
 use App\Models\EditorialProjectTranslation;
+use App\Models\Media;
 use App\Models\Role;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
@@ -22,6 +24,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class EditorialProjectController extends Controller
 {
@@ -131,7 +134,7 @@ class EditorialProjectController extends Controller
         try {
             $editorial_project->update($request->only(['sector_id']));
             if($request->has('title')){
-                $editorial_project->setTranslation($request->title,EditorialProjectTranslation::FIELD_TITLE,App::getLocale());
+                $editorial_project->setTranslation($request->title,EditorialProjectTranslation::FIELD_TITLE, App::getLocale());
             }
 
             $role_key = Auth::user()->roleKey();
@@ -174,5 +177,17 @@ class EditorialProjectController extends Controller
     {
         $editorial_project->delete();
         return response(null, 204);
+    }
+
+    /**
+     * @param EditorialProjectUploadFileRequest $request
+     * @throws Exception
+     */
+    public function uploadFile(EditorialProjectUploadFileRequest $request, $id)
+    {
+        //$path = Storage::putFileAs('files', $request->file('file'), Auth::id() . '.' . $request->file->extension());
+
+        $editorial_project = EditorialProject::findorFail($id);
+        $editorial_project->saveMedia($request->file('file'), $request->file('file'), Auth::id() . '.' . $request->file->extension());
     }
 }
